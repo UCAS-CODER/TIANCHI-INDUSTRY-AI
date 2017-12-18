@@ -1,6 +1,7 @@
 # TIANCHI-INDUSTRY-AI
 天池工业AI大赛
 
+
 数据放在data文件夹下
 
 训练的模型放在model文件夹下
