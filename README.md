@@ -3,6 +3,7 @@
 
 网址：https://tianchi.aliyun.com/competition/introduction.htm?spm=5176.100066.333.2.7c89a202AN6f3s&raceId=231633
 
+# 说明：
 数据放在data文件夹下
 
 训练的模型放在model文件夹下
