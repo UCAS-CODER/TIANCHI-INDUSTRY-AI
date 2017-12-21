@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 train_data = pd.read_excel('../data/训练.xlsx')
+test_data_A = pd.read_excel('../data/测试A.xlsx')
 
 # 用于判断是否存在列，其中每个元素都相同或为NaN，没有无用的列
 # for i in range(1, train_data.shape[1]):
@@ -45,8 +46,13 @@ train_data = train_data.iloc[:, [i for i in range(train_data.shape[1]) if not is
 # 仅保留非nan值超过300的列，剩余3371列，改为400也是同样的结果
 # 如果把thresh=200，则剩余3457列，仅去掉全缺失的列
 train_data = train_data.dropna(axis=1, how='any', thresh=300)
+test_data_A = test_data_A[train_data.keys()[:-1]]
 
 # 用前一个未缺失值填补缺失值，bfill:后一个，None:额外指定value去填补缺失值
 train_data = train_data.fillna(method='ffill')
+train_data = train_data.fillna(method='bfill')
+test_data_A = test_data_A.fillna(method='ffill')
+test_data_A = test_data_A.fillna(method='bfill')
 
-train_data.to_csv('../data/prepare_data.csv')
+train_data.to_csv('../data/prepare_data.csv', index=None)
+test_data_A.to_csv('../data/test_A.csv', index=None)
