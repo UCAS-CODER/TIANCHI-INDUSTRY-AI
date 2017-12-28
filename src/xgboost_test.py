@@ -18,9 +18,11 @@ from sklearn import preprocessing
 import os
 mingw_path = 'D:\\Program Files\\mingw-w64\\x86_64-7.2.0-posix-seh-rt_v5-rev0\\mingw64\\bin'
 os.environ['PATH'] = mingw_path + ';' + os.environ['PATH']
+from submit import submit
 
 train_data = pd.read_csv('../data/prepare_data.csv')
 test_data_A = pd.read_csv('../data/test_A.csv')
+test_ID = np.array(test_data_A['ID'])
 is_object = train_data.dtypes == object
 col_object = is_object[is_object]
 remove_object = train_data.drop(list(col_object.index), axis=1)
@@ -67,21 +69,5 @@ savetime = time.strftime('%m%d_%H_%M',time.localtime(time.time()))
 model.save_model('../model/xgb_'+ savetime +'.model')  # 用于存储训练出的模型
 
 preds = model.predict(xgtest,ntree_limit=model.best_iteration)
-
-submit_template_file = open('../data/测试A-答案模板.csv')
-submit_file = open('../submission/submission_' + savetime + '.csv', 'w')
-i = 0
-for line in submit_template_file.readlines():
-    out_line = line[:-1] + ',' + str(preds[i]) + '\n'
-    submit_file.write(out_line)
-    i += 1
-submit_file.close()
-
-# 定义规则，预测值为训练数据中相同TOOL_ID的平均数
-dict_TOOL_ID = {}
-TOOL_ID_type = list(pd.value_counts(train_data[list(col_object.index)[1]]).index)
-for type in TOOL_ID_type:
-    dict_TOOL_ID[type] = np.mean(train_data[train_data[list(col_object.index)[1]] == type]['Y'])
-pred_TOOL_ID = list(range(len(test_data_A)))
-for i in range(len(test_data_A)):
-    pred_TOOL_ID[i] = dict_TOOL_ID[test_data_A[list(col_object.index)[1]][i]]
+submit_preds = np.vstack((test_ID, preds)).T
+submit(submit_preds)
